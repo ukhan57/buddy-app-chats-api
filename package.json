@@ -11,5 +11,8 @@
     "url": "git+https://github.com/ukhan57/buddy-app-chats-api.git"
   },
   "author": "Team 04",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "prettier": "3.3.3"
+  }
 }
