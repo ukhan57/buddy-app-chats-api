@@ -1,24 +1,54 @@
 // src/server.js
 
-// We want to gracefully shutdown our server
-const stoppable = require('stoppable');
+// Import the necessary modules
+const express = require("express");
+const app = express();
+const http = require("http");
+const cors = require("cors");
+const { Server } = require("socket.io");
 
-// Get our logger instance
-const logger = require('./logger');
+// Use CORS middleware to allow cross-origin requests
+app.use(cors());
 
-// Get our express app instance
-const app = require('./app');
+// Create an HTTP server
+const server = http.createServer(app);
 
-// Get the desired port from the process' environment. Default to `8080`
-const port = parseInt(process.env.PORT || '8080', 10);
+// Create a new instance of Socket.io and attach it to the server
+const io = new Server(server, {
+  cors: {
+    // Allow requests from this origin
+    origin: "http://localhost:3000",
+    // Allow these HTTP methods
+    methods: ["GET", "POST"],
+  },
+});
 
-// Start a server listening on this port
-const server = stoppable(
-  app.listen(port, () => {
-    // Log a message that the server has started, and which port it's using.
-    logger.info(`Server started on port ${port}`);
-  })
-);
+// Listen for a new connection event from client
+io.on("connection", (socket) => {
+  // When a client connects. log their socket ID
+  console.log(`User Connected: ${socket.id}`);
 
-// Export our server instance so other parts of our code can access it if necessary.
-module.exports = server;
+  // Listen for a "join_room" event from the client
+  socket.on("join_room", (data) => {
+    socket.join(data);
+    // Log the users that have joined the room
+    console.log(`User with ID: ${socket.id} joined room: ${data}`);
+  });
+
+  // Listen for a "send_message event from the client"
+  socket.on("send_message", (data) => {
+    // Send the message to all clients in the specified room
+    socket.to(data.room).emit("receive_message", data);
+  });
+
+  // Listen for the disconnect event when the client leaves
+  socket.on("disconnect", () => {
+    // Logs that the user has disconnected
+    console.log("User Disconnected", socket.id);
+  });
+});
+
+// Start the server and listen on port 3001
+server.listen(3001, () => {
+  console.log("SERVER RUNNING");
+});
