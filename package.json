@@ -1,0 +1,15 @@
+{
+  "name": "buddy-app-chats-api",
+  "version": "1.0.0",
+  "description": "This repo will be used as a backend for the chat feature using node.js and socket.io",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ukhan57/buddy-app-chats-api.git"
+  },
+  "author": "Team 04",
+  "license": "UNLICENSED"
+}
