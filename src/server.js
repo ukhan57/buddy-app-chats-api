@@ -7,6 +7,9 @@ const http = require("http");
 const cors = require("cors");
 const { Server } = require("socket.io");
 
+// Define the PORT
+const PORT = 3001;
+
 // Use CORS middleware to allow cross-origin requests
 app.use(cors());
 
@@ -49,6 +52,6 @@ io.on("connection", (socket) => {
 });
 
 // Start the server and listen on port 3001
-server.listen(3001, () => {
-  console.log("SERVER RUNNING");
+server.listen(PORT, () => {
+  console.log(`SERVER RUNNING ON PORT ${PORT}`);
 });
