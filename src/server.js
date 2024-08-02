@@ -80,7 +80,6 @@ io.on("connection", (socket) => {
   // Listen for a "send_message event from the client"
   socket.on("send_message", async (data) => {
     // Send the message to all clients in the specified room
-    // socket.to(data.room).emit("receive_message", data);
     const { room, content, author, time } = data;
 
     // Save messages to MongoDB
