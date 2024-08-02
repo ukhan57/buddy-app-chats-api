@@ -7,6 +7,13 @@ const http = require("http");
 const cors = require("cors");
 const { Server } = require("socket.io");
 
+// Importing AWS SDK
+const AWS = require("aws-sdk");
+
+// Configure AWS SDK for Cognito
+AWS.config.update({region: 'us-east-1'});
+const cognito = new AWS.CognitoIdentityServiceProvider();
+
 // Define the PORT
 const PORT = 3001;
 
@@ -49,6 +56,21 @@ io.on("connection", (socket) => {
     // Logs that the user has disconnected
     console.log("User Disconnected", socket.id);
   });
+});
+
+// Route to list all users
+app.get('/listUsers', async (req,res) => {
+  try {
+    const params = {
+      UserPoolId: 'us-east-1_sTODudYpz',
+      Limit: 10, // Can be adjusted as needed, for now I am going with 10
+    };
+    const users = await cognito.listUsers(params).promise();
+    res.json(users);
+  } catch (err) {
+    console.error("Error fetching users: ", err);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
 });
 
 // Start the server and listen on port 3001
