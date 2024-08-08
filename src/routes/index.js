@@ -10,7 +10,7 @@ const { authenticate } = require('../auth');
 const router = express.Router();
 
 /**
- * Expose all of our API routes on /v1/* to include an API version.
+ * Expose all of our API routes on /api/* to include an API version.
  * Protect them all with middleware so you have to be authenticated
  * in order to access things.
  */
