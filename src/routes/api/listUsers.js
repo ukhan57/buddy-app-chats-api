@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
     });
     logger.info('Successfully Filtered the Users');
 
-    res.json({ Users: filteredUsers });
+    res.status(200).json({ Users: filteredUsers });
     logger.info("Successfully retrieved the users", filteredUsers);
   } catch (err) {
     logger.error("Failed to fetch users", err);
