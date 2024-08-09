@@ -65,7 +65,6 @@ async function syncCognitoUserToMongoDB(cognitoUsername) {
 
         try {
             await user.save();
-            console.log(`Saved user: ${user.email}`);
         } catch (saveError) {
             console.error(`Error saving user: ${user.email}`, saveError);
         }
