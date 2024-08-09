@@ -22,10 +22,10 @@ router.get('/user/:username', require('./userRoute'));
 */
 router.post('/chat', require('./accessChat'));
 
-// /*
-//     * This route will be used for fetching all of the *
-//     * chats from the database for a particular user *
-// */
+/*
+    * This route will be used for fetching all of the *
+    * chats from the database for a particular user *
+*/
 // router.get('/chat', require('./fetchChats'));
 
 // /*
