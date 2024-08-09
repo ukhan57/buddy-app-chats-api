@@ -45,7 +45,8 @@ module.exports = async (req, res) => {
     try {
         users = await cognito.listUsers(params).promise();
         logger.info('Successfully Fetched all the users from Cognito');
-    } catch (err) {
+    // eslint-disable-next-line no-unused-vars
+    } catch (error) {
         logger.error('Failed to fetch all the users from Cognito');
         return res.status(500).json({ err: 'Failed to fetch users from Cognito' });
     }
