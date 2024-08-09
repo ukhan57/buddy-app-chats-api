@@ -11,12 +11,41 @@ const router = express.Router();
 // Define our first route, which will be: GET /api/listUsers
 // This route returns all the users in the cognito userpool
 router.get('/users', require('./listUsers'));
-// Other routes (POST, DELETE, etc.) will go here later on...
 
-// This route will be used to return a single user
+/*
+    * This route will be used to return a single user *
+*/
 router.get('/user/:username', require('./userRoute'));
 
-// This route will be used for chats
-// router.get('/chat', require('./chatRoute'));
+/*
+    * This route will be used for accessing or creating the chat *
+*/
+router.post('/chat', require('./accessChat'));
+
+// /*
+//     * This route will be used for fetching all of the *
+//     * chats from the database for a particular user *
+// */
+// router.get('/chat', require('./fetchChats'));
+
+// /*
+//     * This route will be used for the creation of a group *
+// */
+// router.post('/group', require('./createGroupChat'));
+
+// /*
+//     * This rooute will be used for renaming a gorup *
+// */
+// router.put('/rename', require('./renameGroup'));
+
+// /*
+//     * To remove someone from the group or to leave the group *
+// */
+// router.put('/groupRemove', require('./removeFromGroup'));
+
+// /*
+//     * To add someone to the group  *
+// */
+// router.put('/groupAdd', require('./addToGroup'));
 
 module.exports = router;
