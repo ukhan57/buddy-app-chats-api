@@ -36,7 +36,7 @@ router.post('/chat/group', require('./createGroupChat'));
 // /*
 //     * This rooute will be used for renaming a gorup *
 // */
-// router.put('/rename', require('./renameGroup'));
+router.put('/rename', require('./renameGroup'));
 
 // /*
 //     * To remove someone from the group or to leave the group *
