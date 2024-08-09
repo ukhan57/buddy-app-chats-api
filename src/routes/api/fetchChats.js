@@ -6,6 +6,8 @@ const logger = require('../../logger');
 
 module.exports = async (req, res) => {
     try {
+        // Query the Chat collection to find chats where the user's ID is in the `users` array
+        // `req.user._id` is the ID of the currently logged-in user
         Chat.find({ users : { $elemMatch: { $eq: req.user._id } } })
         .populate("users", "-password")
         .populate("groupAdmin", "-password")
