@@ -6,7 +6,6 @@ const helmet = require('helmet');
 const compression = require('compression');
 
 const logger = require('./logger');
-const connectDB = require('./config/db');
 const pino = require('pino-http')({
   // Use our default logger instance, which is already configured
   logger,
@@ -70,9 +69,6 @@ app.use((err, req, res, next) => {
     },
   });
 });
-
-// Connecting to MongoDB
-connectDB();
 
 // Export our `app` so we can access it in server.js
 module.exports = app;

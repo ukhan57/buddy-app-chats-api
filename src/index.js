@@ -7,6 +7,9 @@ require('dotenv').config();
 // We want to log any crash cases so we can debug later from logs.
 const logger = require('./logger');
 
+// Import the syncUser function to sync users when the server starts
+const { syncUsers } = require('./scripts/syncCognitoToDB');
+
 // If we're going to crash because of an uncaught exception, log it first.
 // https://nodejs.org/api/process.html#event-uncaughtexception
 process.on('uncaughtException', (err, origin) => {
@@ -23,3 +26,9 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // Start our server
 require('./server');
+
+syncUsers().then(() => {
+  logger.info('Cognito users synced successfully');
+}).catch(err => {
+  logger.error('Error synching Cognito users: ', err);
+});

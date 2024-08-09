@@ -9,8 +9,9 @@ const cognito = new AWS.CognitoIdentityServiceProvider();
 
 // Creating the user schema
 const userScehma = mongoose.Schema({
+    cognitoUsername: { type: String, require: true, unique: true},
     name: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
     password: {type: String, required: true },
     pic: {
         type: String,
@@ -21,6 +22,8 @@ const userScehma = mongoose.Schema({
 {
     timestamps: true,
 });
+
+userScehma.index({ email: 1, cognitoUsername: 1}, { unique: true });
 
 const User = mongoose.model("User", userScehma);
 
@@ -43,23 +46,31 @@ async function syncCognitoUserToMongoDB(cognitoUsername) {
         const email = attributes.email;
         const name = attributes.name;
 
-        let user = await User.findOne({email});
+        // Find user by Cognito username, falling back to email
+        let user = await User.findOne({ $or: [{ email }, { cognitoUsername }] });
 
         if (!user) {
             user = new User({
                 name: name || "Anonymous",
                 email,
-                password: 'default-password', // This should be handled securely, possibly not stored
+                password: null, // This should be handled securely, possibly not stored
                 pic: attributes.picture || undefined,
+                cognitoUsername: cognitoUsername,
             });
         } else {
+            user.cognitoUsername = cognitoUsername; // To store/update the cognito username
             user.name = name || user.name;
             user.pic = attributes.picture || user.pic;
+        }
+
+        try {
             await user.save();
+            console.log(`Saved user: ${user.email}`);
+        } catch (saveError) {
+            console.error(`Error saving user: ${user.email}`, saveError);
         }
 
         return user;
-
     } catch (err) {
         console.error("Error synching user: ", err);
         throw err;
