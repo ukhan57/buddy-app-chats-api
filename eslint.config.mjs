@@ -1,15 +1,16 @@
 import globals from "globals";
 import pluginJs from "@eslint/js";
 
+const jestGlobals = globals.jest;
+
 export default [
   {
     files: ["**/*.js"],
     languageOptions: {
       sourceType: "commonjs",
-      ecmaVersion: 'latest',
       globals: {
-        ...globals.node, // Use the node globals
-        // Add any other global variables you might need
+        ...globals.node,
+        ...jestGlobals,
       },
     },
   },
