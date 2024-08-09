@@ -13,4 +13,10 @@ const router = express.Router();
 router.get('/users', require('./listUsers'));
 // Other routes (POST, DELETE, etc.) will go here later on...
 
+// This route will be used to return a single user
+router.get('/user/:username', require('./userRoute'));
+
+// This route will be used for chats
+// router.get('/chat', require('./chatRoute'));
+
 module.exports = router;
