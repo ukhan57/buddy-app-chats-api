@@ -26,12 +26,12 @@ router.post('/chat', require('./accessChat'));
     * This route will be used for fetching all of the *
     * chats from the database for a particular user *
 */
-// router.get('/chat', require('./fetchChats'));
+router.get('/chat', require('./fetchChats'));
 
 // /*
 //     * This route will be used for the creation of a group *
 // */
-// router.post('/group', require('./createGroupChat'));
+router.post('/chat/group', require('./createGroupChat'));
 
 // /*
 //     * This rooute will be used for renaming a gorup *
