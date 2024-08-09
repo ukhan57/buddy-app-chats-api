@@ -41,11 +41,11 @@ router.put('/chat/rename', require('./renameGroup'));
 /*
     * To remove someone from the group or to leave the group *
 */
-// router.put('/groupRemove', require('./removeFromGroup'));
+router.put('/chat/groupRemove', require('./removeFromGroup'));
 
 /*
     * To add someone to the group  *
 */
-router.put('/groupAdd', require('./addToGroup'));
+router.put('/chat/groupAdd', require('./addToGroup'));
 
 module.exports = router;
