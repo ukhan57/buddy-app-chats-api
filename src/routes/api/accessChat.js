@@ -31,6 +31,7 @@ module.exports = async (req, res) => {
 
     // If chat already exists, then respond with the first chat found
     if (isChat.length > 0) {
+        logger.info('Existing user chats found')
         res.send(isChat[0]);
     } else {
         var chatData = {
@@ -42,7 +43,9 @@ module.exports = async (req, res) => {
             const createdChat = await Chat.create(chatData);
             const FullChat = await Chat.findOne({ _id: createdChat._id }).populate("users", "-password");
             res.status(200).send(FullChat);
+            logger.info("Created a new Chat for the users")
         } catch (err) {
+            logger.error('Unable to create a chat');
             res.status(400).json({ err: 'Something wrong happened'});
             throw new Error(err.message);
         }
