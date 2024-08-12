@@ -15,7 +15,7 @@ router.get('/users', require('./listUsers'));
 /*
     * This route will be used to return a single user *
 */
-router.get('/user/:username', require('./userRoute'));
+router.get('/user', require('./userRoute'));
 
 /*
     * This route will be used for accessing or creating the chat *
