@@ -10,6 +10,7 @@ const chatModal = new mongoose.Schema({
   users: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
 ],
   latestMessage: {
@@ -24,6 +25,9 @@ const chatModal = new mongoose.Schema({
 {
     timestamps: true, //To create timestamps for every chat
 });
+
+chatModal.index({ users: 1 });
+chatModal.index({ latestMessage: 1 });
 
 const Chat = mongoose.model("Chat", chatModal);
 

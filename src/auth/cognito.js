@@ -7,6 +7,7 @@
 const passport = require('passport');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const { CognitoJwtVerifier } = require('aws-jwt-verify');
+const { syncCognitoUserToMongoDB } = require('../modals/userModel');
 
 const logger = require('../logger');
 
@@ -48,12 +49,20 @@ module.exports.strategy = () =>
   new BearerStrategy(async (token, done) => {
     try {
       // Verify this JWT
-      const user = await jwtVerifier.verify(token);
-      logger.debug({ user }, 'verified user token');
+      const cognitoUser = await jwtVerifier.verify(token);
+      logger.debug({ cognitoUser }, 'verified user token');
+
+      if (!cognitoUser || !cognitoUser.sub) {
+        logger.error('Token does not contain user ID');
+        return done(null, false);
+      }
+      
+      // Sync the cognito user with MongDB and get the user from the database
+      const user = await syncCognitoUserToMongoDB(cognitoUser['cognito:username']);
 
       // Create a user, but only bother with their email. We could
       // also do a lookup in a database, but we don't need it.
-      done(null, user.email);
+      done(null, user);
     } catch (err) {
       logger.error({ err, token }, 'could not verify token');
       done(null, false);

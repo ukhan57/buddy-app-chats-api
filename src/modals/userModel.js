@@ -12,7 +12,7 @@ const userScehma = mongoose.Schema({
     cognitoUsername: { type: String, require: true, unique: true},
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: {type: String, required: true },
+    password: {type: String, required: false },
     pic: {
         type: String,
         required: true,
@@ -43,24 +43,22 @@ async function syncCognitoUserToMongoDB(cognitoUsername) {
             return acc;
         }, {});
 
-        const email = attributes.email;
-        const name = attributes.name;
+        const { email, name = "Anonymous", picture } = attributes;
 
         // Find user by Cognito username, falling back to email
         let user = await User.findOne({ $or: [{ email }, { cognitoUsername }] });
 
         if (!user) {
             user = new User({
-                name: name || "Anonymous",
+                name,
                 email,
-                password: null, // This should be handled securely, possibly not stored
-                pic: attributes.picture || undefined,
-                cognitoUsername: cognitoUsername,
+                cognitoUsername,
+                pic: picture || undefined,
             });
         } else {
             user.cognitoUsername = cognitoUsername; // To store/update the cognito username
             user.name = name || user.name;
-            user.pic = attributes.picture || user.pic;
+            user.pic = picture || user.pic;
         }
 
         try {
