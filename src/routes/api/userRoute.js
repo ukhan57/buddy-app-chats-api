@@ -9,11 +9,11 @@ const logger = require('../../logger');
 
 module.exports = async (req, res) => {
   try {
-    const { username } = req.params;
+    const { name } = req.query;
 
-    if (!username) {
-        logger.error("Username is requred")
-        return res.status(400).json({ error: "Username is required" })
+    if (!name) {
+        logger.error("name is requred")
+        return res.status(400).json({ error: "name is required" })
     }
 
     // Decode the token to get the current user's username
@@ -51,24 +51,24 @@ module.exports = async (req, res) => {
         return res.status(500).json({ err: 'Failed to fetch users from Cognito' });
     }
 
-    // Find out the currently authenticated/logged-in user
-    const user = users.Users.find(
-        user => user.Username === username || user.Attributes.find(attr => attr.Name === 'sub').Value === username);
-    
-    if (!user) {
-        logger.info("User not found");
-        return res.status(404).json({ error: "User not found" });
+    // Filter users based on the provided name
+    const filteredUsers = users.Users.filter(user => 
+      user.Username.startsWith(name) || 
+      user.Attributes.some(attr => attr.Name === 'email' && attr.Value.startsWith(name))
+    );
+
+    if (filteredUsers.length === 0) {
+      logger.info("No users found");
+      return res.status(404).json({ error: "No users found" });
     }
 
-    // To ensure that the user is not the current auhenticated user
-    const emailAttr = user.Attributes.find(attr => attr.Name === 'email');
-    if (emailAttr && emailAttr.Value === currentEmail) {
-        logger.info("Cannot fetch detials for the current user");
-        return res.status(403).json({ error: 'Cannot fetch details for the current user' });
-    }
+    const usersNotCurrent = filteredUsers.filter(user => {
+      const emailAttr = user.Attributes.find(attr => attr.Name === 'email');
+      return emailAttr && emailAttr.Value !== currentEmail;
+    });
 
     logger.info('Successfully Found the User');
-    res.json({ User: user });
+    res.status(200).json({ User: usersNotCurrent });
   } catch (err) {
     logger.error("Failed to fetch user", err);
     res.status(500).json({ error: 'Failed to fetch user' });
