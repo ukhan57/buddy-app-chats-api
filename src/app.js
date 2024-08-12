@@ -21,6 +21,9 @@ const app = express();
 // Use pino logging middleware
 app.use(pino);
 
+// Middleware to parse JSON bodies
+app.use(express.json());
+
 // Use helmetjs security middleware
 app.use(helmet());
 
