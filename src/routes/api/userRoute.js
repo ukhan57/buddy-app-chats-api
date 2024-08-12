@@ -1,6 +1,5 @@
 // // src/roues/api/userRoute.js
 
-const jwt = require("jsonwebtoken");
 const logger = require('../../logger');
 const { User } = require('../../modals/userModel');
 
@@ -13,24 +12,14 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: "Name is required" });
     }
 
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      logger.error("Authorization header is missing");
+    // Ensure the middleware has set req.user
+    if (!req.user) {
+      logger.error("User not authenticated");
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const token = authHeader.split(" ")[1];
-    let decoded;
-    try {
-      decoded = jwt.decode(token);
-      logger.info('Successfully decoded the token');
-    } catch (error) {
-      logger.error('Failed to decode token: ', error);
-      return res.status(400).json({ error: "Invalid token" });
-    }
-
-    const currentEmail = decoded.email;
-    const currentUser = decoded["cognito:username"];
+    const currentEmail = req.user.email;
+    const currentUser = req.user.username;
     logger.debug(`Current user's username: ${currentUser}`);
     logger.debug(`Current user's email: ${currentEmail}`);
 
@@ -55,7 +44,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ users: usersNotCurrent });
     } catch (error) {
       console.error("Error querying MongoDB:", error.message, error.stack);
-      throw new Error("Database query failed");
+      return res.status(404).json({ message: 'User not dot esist'});
     }
   } catch (err) {
     logger.error("Failed to fetch user:", err);
