@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
             select: 'name pic email',
         });
 
-        logger.debug({results}, 'Successfully fetched the cahts');
+        logger.info('Successfully fetched the cahts');
         res.status(200).send(results);
     } catch (err) {
         logger.error("Unable to fetch the chats")
