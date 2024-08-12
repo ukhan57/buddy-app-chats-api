@@ -2,6 +2,7 @@
 
 // Importing AWS SDK Configure AWS SDK for Cognito
 const AWS = require("aws-sdk");
+const jwt = require("jsonwebtoken");
 AWS.config.update({region: 'us-east-1'});
 const cognito = new AWS.CognitoIdentityServiceProvider();
 
@@ -20,13 +21,13 @@ module.exports = async (req, res) => {
     const authHeader = req.headers.authorization;
     const token = authHeader.split(" ")[1];
     let decoded;
-
+    
     try {
-      decoded = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-      logger.info('Successfully Decoded the token');
+      decoded = jwt.decode(token);
+      logger.info("Successfully Decoded the Token");
     } catch (error) {
-      logger.error('Failed to decode token: ', error);
-      return res.status(400).json({ error: "Invalid token" });
+      logger.error("Failed to decode the token: ", error);
+      return res.status(400).json({ error: "Invalid Token" });
     }
 
     // Get the current username and password after decoding
