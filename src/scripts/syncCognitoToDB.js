@@ -1,9 +1,7 @@
 // src/scripts/syncCognitoToDB.js
 
 const AWS = require("aws-sdk");
-const mongoose = require("mongoose");
 const { syncCognitoUserToMongoDB } = require('../modals/userModel');
-const connectDB = require("../config/db");
 require('dotenv').config();
 
 // Configure AWS SDK for Cognito
@@ -32,9 +30,6 @@ async function listAllUsers() {
 
 async function syncUsers() {
     try {
-        // Connect to MongoDB
-        await connectDB();
-
         const users = await listAllUsers();
 
         for(const user of users) {
@@ -46,8 +41,6 @@ async function syncUsers() {
         }
     } catch (err) {
         console.error('Error during synching users: ', err);
-    } finally {
-        mongoose.connection.close();
     }
 }
 
