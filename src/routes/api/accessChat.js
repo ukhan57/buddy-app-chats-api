@@ -1,53 +1,60 @@
-// src/roues/api/accessChat.js
-
-const Chat = require("../../modals/chatModel");
-const User = require("../../modals/userModel");
+const Chat = require('../../modals/chatModel');
+const { User } = require('../../modals/userModel');
 const logger = require('../../logger');
 
 module.exports = async (req, res) => {
-    const { userId } = req.body;
+    try {
+        console.log('Request Body: ', req.body);
+        const { userId } = req.body;
+        logger.debug(`Received User ID: ${userId}`);
 
-    // To check if the user id is sent or not
-    if (!userId) {
-        logger.error("UserId parameter is not sent with the request");
-        return res.status(400).json({ error: 'UserId param is not send with the request'});
-    }
+        // Validate the presence of userId in the request body
+        if (!userId) {
+            logger.error("UserId parameter is not sent with the request");
+            return res.status(400).json({ error: 'userId parameter is not sent with the request' });
+        }
 
-    // Find an existing chat between the current user (req.user._id) and the specified user (userId) 
-    var isChat = await Chat.find({
-        isGroupChat: false, // Ensure its not a group chat
-        $and: [
-            { users: { $elemMatch: { $eq: req.user._id } } },
-            { users: { $elemMatch: { $eq: userId } } },
-        ],
-    }).populate("users", "-password") // Populate user details, excluding the passwod filed
-    .populate("latestMessage"); // Populate the latest mssage in the chat
+        // Ensure that the user is authenticated and req.user._id exists
+        if (!req.user || !req.user._id) {
+            logger.error("User is not authenticated");
+            return res.status(401).json({ error: 'User not authenticated' });
+        }
 
-    //  Populate the sender details of the latest message
-    isChat = await User.populate(isChat, {
-        path: "latestMessage.sender",
-        select: "name pic email",
-    });
+        // Check if a chat already exists between the current user and the specified user
+        let existingChat = await Chat.findOne({
+            isGroupChat: false, // Ensure it's not a group chat
+            users: { $all: [req.user._id, userId] }
+        }).populate("users", "-password")
+          .populate("latestMessage")
+          .exec();
 
-    // If chat already exists, then respond with the first chat found
-    if (isChat.length > 0) {
-        logger.info('Existing user chats found')
-        res.send(isChat[0]);
-    } else {
-        var chatData = {
+        // Populate the sender details of the latest message if an existing chat is found
+        if (existingChat) {
+            existingChat = await User.populate(existingChat, {
+                path: "latestMessage.sender",
+                select: "name pic email"
+            });
+            logger.info('Existing chat found');
+            return res.status(200).json(existingChat);
+        }
+
+        // Create a new chat if no existing chat is found
+        const chatData = {
             chatName: "sender",
             isGroupChat: false,
             users: [req.user._id, userId],
         };
-        try {
-            const createdChat = await Chat.create(chatData);
-            const FullChat = await Chat.findOne({ _id: createdChat._id }).populate("users", "-password");
-            res.status(200).send(FullChat);
-            logger.info("Created a new Chat for the users")
-        } catch (err) {
-            logger.error('Unable to create a chat');
-            res.status(400).json({ err: 'Something wrong happened'});
-            throw new Error(err.message);
-        }
+
+        const createdChat = await Chat.create(chatData);
+        const fullChat = await Chat.findOne({ _id: createdChat._id })
+                                   .populate("users", "-password")
+                                   .populate("latestMessage");
+
+        logger.info("Created a new chat for the users");
+        return res.status(200).json(fullChat);
+        
+    } catch (err) {
+        logger.error('Error handling create chat request:', err);
+        return res.status(500).json({ error: 'Internal server error' });
     }
 };
