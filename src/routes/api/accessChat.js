@@ -4,7 +4,6 @@ const logger = require('../../logger');
 
 module.exports = async (req, res) => {
     try {
-        console.log('Request Body: ', req.body);
         const { userId } = req.body;
         logger.debug(`Received User ID: ${userId}`);
 
