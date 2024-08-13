@@ -26,11 +26,11 @@ module.exports = async (req, res) => {
             logger.warn('Chat not found for ID: ', { chatId });
             res.status(404).json({ message: 'Chat not found' });
         } else {
-            logger.info('User added to the chat successfully: ', { chatId, userId, removed });
+            logger.info('User Successfully Removed From the Group: ', { chatId, userId, removed });
             res.status(200).json(removed);
         }
     } catch (err) {
-        logger.error('Error adding uuser to chat: ', { error: err.message });
-        res.status(500).json({ message: 'Unable to add user to chat', error: err.message });
+        logger.error('Error removing user from the group: ', { error: err.message });
+        res.status(500).json({ message: 'Unable to remove user from the chat', error: err.message });
     }
 };

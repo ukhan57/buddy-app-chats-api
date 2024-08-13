@@ -6,7 +6,7 @@ const logger = require('../../logger');
 module.exports = async (req, res) => {
     // Extract the chat id and user id from the body
     const { chatId, userId } = req.body;
-    logger.debug("Request data: ", { chatId, userId });
+    logger.debug("Request data: ",  req.body );
 
     try {
         // Add the user to the chat's user list
