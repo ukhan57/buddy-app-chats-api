@@ -48,4 +48,14 @@ router.put('/chat/groupRemove', require('./removeFromGroup'));
 */
 router.put('/chat/groupAdd', require('./addToGroup'));
 
+/*
+    * This route will be used for message route *
+*/
+router.post('/message', require("./sendMessages"));
+
+/*
+    * This route will be used to receive the message *
+*/
+// router.get('/message/:chatId', require('./allMessages'))
+
 module.exports = router;
