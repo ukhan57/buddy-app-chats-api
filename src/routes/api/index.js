@@ -18,6 +18,11 @@ router.get('/users', require('./listUsers'));
 router.get('/user', require('./userRoute'));
 
 /*
+    * This route will be used to return a current user's user ID *
+*/
+router.get('/userId', require('./getUserId'));
+
+/*
     * This route will be used for accessing or creating the chat *
 */
 router.post('/chat', require('./accessChat'));
