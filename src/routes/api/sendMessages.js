@@ -58,6 +58,6 @@ module.exports = async (req, res) => {
         res.status(200).json(message);
     } catch (err) {
         logger.error("Unable to create a new message: ", { error: err.message, stack: err.stack });
-    return res.status(400).json({ message: 'Unable to create the message', error: err.message });
+        return res.status(400).json({ message: 'Unable to create the message', error: err.message });
     }
 }
