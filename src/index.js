@@ -30,10 +30,13 @@ process.on('unhandledRejection', (reason, promise) => {
 // Start our server
 require('./server');
 
+// Start our server and connect to MongoDB
 connectDB().then(() => {
-    syncUsers().then(() => {
+  syncUsers().then(() => {
     logger.info('Cognito users synced successfully');
   }).catch(err => {
     logger.error('Error synching Cognito users: ', err);
-  })
+  });
+}).catch(err => {
+  logger.error('Error connecting to MongoDB: ', err);
 });
