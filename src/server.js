@@ -63,6 +63,12 @@ io.on('connection', (socket) => {
       socket.in(user._id).emit("message_recieved", newMessageRecieved);
     });
   })
+
+  // For typing
+  socket.on("typing", (room) => socket.in(room).emit("typing"));
+
+  // For stop typing
+  socket.on("stop_typing", (room) => socket.in(room).emit("stop_typing"));
 })
 
 // Start the server
