@@ -62,14 +62,20 @@ io.on('connection', (socket) => {
 
       socket.in(user._id).emit("message_recieved", newMessageRecieved);
     });
-  })
+  });
 
   // For typing
   socket.on("typing", (room) => socket.in(room).emit("typing"));
 
   // For stop typing
   socket.on("stop_typing", (room) => socket.in(room).emit("stop_typing"));
-})
+
+  // Disconnecting from socket io to reduce the bandwidth
+  socket.off("setup", (userData) => {
+    logger.info("User is now disconnected");
+    socket.leave(userData._id);
+  });
+});
 
 // Start the server
 stoppable(
@@ -77,7 +83,6 @@ stoppable(
     logger.info(`Server started on port ${port}`);
   })
 );
-
 
 // Export our server instance so other parts of our code can access it if necessary.
 module.exports = { server, io };
