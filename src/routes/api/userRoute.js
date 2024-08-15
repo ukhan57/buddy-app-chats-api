@@ -19,8 +19,8 @@ module.exports = async (req, res) => {
     }
 
     const currentEmail = req.user.email;
-    const currentUser = req.user.username;
-    logger.debug(`Current user's username: ${currentUser}`);
+    const currentUser = req.user.name;
+    logger.debug(`Current user's name: ${currentUser}`);
     logger.debug(`Current user's email: ${currentEmail}`);
 
     try {
