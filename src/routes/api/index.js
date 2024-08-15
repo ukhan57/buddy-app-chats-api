@@ -8,10 +8,6 @@ const express = require('express');
 // Create a router on which to mount our API endpoints
 const router = express.Router();
 
-// Define our first route, which will be: GET /api/listUsers
-// This route returns all the users in the cognito userpool
-router.get('/users', require('./listUsers'));
-
 /*
     * This route will be used to return a single user *
 */
